@@ -7,6 +7,7 @@
 %token tok_static
 %token tok_public
 %token tok_private
+%token tok_throws
 
 %%
 
@@ -15,7 +16,7 @@ decl_list : method_decl_list
 method_decl_list : method_decl
 		 | method_decl method_decl_list
 
-method_decl : method_decl_prefix var_name '(' param_list ')' '{'
+method_decl : method_decl_prefix var_name '(' param_list ')' exception_list '{'
     	{
 	  //printf("decl: %d [ %s %s ]\n", ++decl_count, $1, $2);
 	  writeComment($1, $2);
@@ -37,9 +38,7 @@ method_decl_prefix : modifier type
 modifier : tok_public | tok_private ;
 
 type : tok_variable
-     | tok_variable '[' ']'
-     {
-     }
+     | tok_variable '[' ']' ;
 
 param_list : param ;
 	   | param ',' param_list ;
@@ -50,7 +49,20 @@ param : type var_name
         addParam($1, $2);
       }
 
+exception_list : tok_throws var_list
+	       | ;
+
+var_list : var_name
+	 {
+	   addVar(strdup("exception"), $1);
+	 }
+	 | var_name ',' var_list
+	 {
+	   addVar(strdup("exception"), $1);
+	 }
+
 var_name : tok_variable ;
+
 
 %%
 
@@ -62,6 +74,7 @@ int stringType(const char *s)
   if (!strcmp(s, "static")) return tok_static;
   if (!strcmp(s, "public")) return tok_public;
   if (!strcmp(s, "private")) return tok_private;
+  if (!strcmp(s, "throws")) return tok_throws;
   return tok_variable;
 }
 

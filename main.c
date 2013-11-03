@@ -6,6 +6,7 @@ FILE *outfile = NULL;
 int error_count = 0;
 int decl_count = 0;
 Param *params = NULL;
+Param *vars = NULL;
 
 int main(int argc, const char *argv[])
 {
@@ -96,9 +97,45 @@ void writeComment(const char *mtype, const char *mname)
     fprintf(outfile, " * @return DESCRIPTION\n");
   }
 
+  Param *var = vars;
+  while (var) {
+    fprintf(outfile, " * @throws %s DESCRIPTION\n", var->name);
+    var = var->next;
+  }
+
   fprintf(outfile, " */\n\n");
 
   clearParams();
+  clearVars();
   free((void *)mtype);
   free((void *)mname);
+}
+
+void addVar(const char *type, const char *name)
+{
+  Param *var = (Param *)malloc(sizeof(Param));
+  if (!var) {
+    fprintf(stderr, "Unable to allocate memory for a variable");
+    exit(1);
+  }
+
+  var->type = type;
+  var->name = name;
+  var->next = vars;
+  vars = var;
+}
+
+void clearVars()
+{
+  Param *var = vars;
+  Param *save = NULL;
+  while (var) {
+    save = var;
+    var = var->next;
+    //printf("freeing : %s\n", save->name);
+    free((void *)save->name);
+    free((void *)save->type);
+    free(save);
+  }
+  vars = NULL;
 }

@@ -22,7 +22,12 @@ typedef struct Param {
 } Param; 
 
 extern Param *params;
+extern Param *vars;
 void addParam(const char *type, const char *name);
+void clearParams();
 void writeComment(const char *mtype, const char *mname);
+void addVar(const char *type, const char *name);
+void clearVars();
+
 
 #endif
