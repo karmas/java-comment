@@ -12,9 +12,11 @@
 %%
 
 decl_list : method_decl_list
+	  ;
 
 method_decl_list : method_decl
 		 | method_decl method_decl_list
+		 ;
 
 method_decl : method_decl_prefix var_name '(' param_list ')' exception_list '{'
     	{
@@ -25,6 +27,7 @@ method_decl : method_decl_prefix var_name '(' param_list ')' exception_list '{'
 	{
 	  // parser calls yyerror to print error message
 	}
+	;
 
 method_decl_prefix : modifier type
 		   {
@@ -34,23 +37,34 @@ method_decl_prefix : modifier type
 		   {
 		     $$ = $3;
 		   }
+		   ;
 
-modifier : tok_public | tok_private ;
+modifier : tok_public
+	 | tok_private
+	 ;
 
-type : tok_variable
-     | tok_variable '[' ']' ;
+type : scalar_type
+     | scalar_type '[' ']'
+     ;
 
-param_list : param ;
-	   | param ',' param_list ;
-	   | ;
+scalar_type : tok_variable
+	    | tok_variable '.' scalar_type
+	    ;
+
+param_list : param
+	   | param ',' param_list
+	   |
+	   ;
 
 param : type var_name
       {
         addParam($1, $2);
       }
+      ;
 
 exception_list : tok_throws var_list
-	       | ;
+	       |
+	       ;
 
 var_list : var_name
 	 {
@@ -60,8 +74,10 @@ var_list : var_name
 	 {
 	   addVar(strdup("exception"), $1);
 	 }
+	 ;
 
-var_name : tok_variable ;
+var_name : tok_variable
+	 ;
 
 
 %%

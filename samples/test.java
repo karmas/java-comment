@@ -24,7 +24,7 @@ public class FunctionCall {
 	System.out.println ("funct2 returned a value of " + val);
     }
 
-    public static int funct2 (int param)
+    private static Mytype.Insidetype funct2 (int param)
       throws ExceptionA, ExceptionB {
 	System.out.println ("Inside funct2 with param " + param);
 	return param * 2;
